@@ -4,6 +4,7 @@ import cv2
 import numpy as np
 from detect import detect_keypoints
 from match import match_keypoints, show_matches
+from homography import ransac_homography, show_homography
 
 
 def load_image(path: str, max_dim: int = 1600, debug: bool = False):
@@ -42,14 +43,22 @@ def stitch_images(left_image, right_image, debug: bool = False):
     if debug:
         show_matches(left_image, right_image, matches_l, matches_r)
 
+    H, inliers = ransac_homography(matches_r, matches_l)   # note: r, l order
+    if debug:
+        show_homography(
+            left_image=left_image,
+            H=H,
+            matches_l=matches_l,
+            matches_r=matches_r
+        )
+
 def main():
     if len(sys.argv) != 4:
         print("Usage: python main.py <left.jpg> <right.jpg> <output.jpg>")
         sys.exit(1)
-    debug = True  # Set to True to visualize keypoints
-    left_image = load_image(sys.argv[1], debug=debug)
-    right_image = load_image(sys.argv[2], debug=debug)
-    panorama = stitch_images(left_image, right_image, debug=debug)
+    left_image = load_image(sys.argv[1])
+    right_image = load_image(sys.argv[2])
+    panorama = stitch_images(left_image, right_image, debug=True)
 
 if __name__ == "__main__":
     main()
