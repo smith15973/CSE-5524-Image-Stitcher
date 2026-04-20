@@ -1,8 +1,7 @@
 
 import sys
 import cv2
-import numpy as np
-from detect import detect_keypoints
+from detect import sift_detect_keypoints, harris_detect_keypoints, describe_points, show_keypoints
 from match import match_keypoints, show_matches
 from homography import ransac_homography, show_homography
 from stitch import stitch as warp_and_blend
@@ -28,8 +27,18 @@ def load_image(path: str, max_dim: int = 1600, debug: bool = False):
     return image
 
 def stitch_images(left_image, right_image, debug: bool = False):
-    keypoints_left, descriptors_left = detect_keypoints(left_image, debug=debug)
-    keypoints_right, descriptors_right = detect_keypoints(right_image, debug=debug)
+    keypoints_left, descriptors_left = sift_detect_keypoints(left_image)
+    keypoints_right, descriptors_right = sift_detect_keypoints(right_image)
+    
+    # keypoints_left = harris_detect_keypoints(left_image)
+    # keypoints_right = harris_detect_keypoints(right_image)
+    # keypoints_left, descriptors_left = describe_points(left_image, keypoints_left)
+    # keypoints_right, descriptors_right = describe_points(right_image, keypoints_right)
+
+    show_keypoints(left_image, keypoints_left, "Left Image Keypoints")
+    show_keypoints(right_image, keypoints_right, "Right Image Keypoints")
+
+
 
     print(f"Left Interesting Points: {len(keypoints_left)}")
     print(f"Right Interesting Points: {len(keypoints_right)}")

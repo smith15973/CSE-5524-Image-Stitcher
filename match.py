@@ -67,8 +67,8 @@ def show_matches(image_l, image_r, matches_l, matches_r, max_lines=50):
         pt_l = (int(x_l), int(y_l))
         pt_r = (int(x_r) + w_l, int(y_r))   # shift right-image x by left-image width
 
-        cv2.circle(canvas, pt_l, 4, (0, 255, 0), 1)
-        cv2.circle(canvas, pt_r, 4, (0, 255, 0), 1)
+        cv2.circle(canvas, pt_l, 4, (255, 0, 0), -1)
+        cv2.circle(canvas, pt_r, 4, (255, 0, 0), -1)
         cv2.line(canvas, pt_l, pt_r, (0, 255, 255), 1)
 
     cv2.imshow("Matches", canvas)

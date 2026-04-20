@@ -163,8 +163,8 @@ def show_homography(left_image, H, matches_l, matches_r, max_points=50):
         proj = (int(projected[k, 0]), int(projected[k, 1]))
 
         cv2.line(canvas, actual, proj, (0, 255, 255), 1)      # yellow residual line
-        cv2.circle(canvas, actual, 4, (0, 255, 0), 1)         # green actual
-        cv2.circle(canvas, proj, 4, (0, 0, 255), 1)           # red projected
+        cv2.circle(canvas, actual, 4, (0, 255, 0), -1)         # green actual
+        cv2.circle(canvas, proj, 4, (0, 0, 255), -1)           # red projected
 
     # Report mean reprojection error in pixels — single most useful number
     errors = np.linalg.norm(projected - matches_l, axis=1)
