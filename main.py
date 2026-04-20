@@ -5,6 +5,7 @@ import numpy as np
 from detect import detect_keypoints
 from match import match_keypoints, show_matches
 from homography import ransac_homography, show_homography
+from stitch import stitch as warp_and_blend
 
 
 def load_image(path: str, max_dim: int = 1600, debug: bool = False):
@@ -52,13 +53,31 @@ def stitch_images(left_image, right_image, debug: bool = False):
             matches_r=matches_r
         )
 
+    # Note for color channels: for matplotlib (plt.imshow), convert first: plt.imshow(panorama[:, :, ::-1])
+    # ***CHANGE BLEND METHOD HERE!!***
+    # 'alpha' = simple, 'pyramid' = multi-scale, smoother
+    panorama = warp_and_blend(left_image, right_image, H,
+                              blend_method='pyramid', debug=debug)
+    return panorama
+
+
 def main():
     if len(sys.argv) != 4:
         print("Usage: python main.py <left.jpg> <right.jpg> <output.jpg>")
         sys.exit(1)
-    left_image = load_image(sys.argv[1])
+    left_image  = load_image(sys.argv[1])
     right_image = load_image(sys.argv[2])
+    output_path = sys.argv[3]
+
     panorama = stitch_images(left_image, right_image, debug=True)
+
+    # Save and display result
+    if panorama is not None:
+        cv2.imwrite(output_path, panorama)
+        print(f"Saved panorama to {output_path}")
+        cv2.imshow("Panorama", panorama)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
 
 if __name__ == "__main__":
     main()
